@@ -9,13 +9,38 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Color.gray.ignoresSafeArea()
+        ScrollView {
+                
+            VStack(alignment: .leading) {
+                    Text("SERGEY ZAKURAKIN")
+                    .foregroundStyle(.black)
+                        .font(.title)
+                Text("PHOTOGRAPHY")
+                    .padding(.bottom)
+                
+                HStack {
+                    Text("LIKES")
+                    
+                    Spacer()
+                    
+                    Image(systemName: "heart.fill")
+                    
+                }
+                .padding(.horizontal)
+                
+                    Image(.photo)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 400)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+//                        .padding(.top)
+                        
+                }
+                .padding()
+            }
         }
-        .padding()
     }
 }
 
