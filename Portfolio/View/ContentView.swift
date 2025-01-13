@@ -11,82 +11,65 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @StateObject var vm = AlbumsViewModel()
+    @StateObject var vm = PhotosViewModel()
     
     var body: some View {
         ZStack {
             Color.gray.ignoresSafeArea()
-        ScrollView {
-                
-            VStack() {
-                    Text("SERGEY ZAKURAKIN")
+            
+            VStack {
+                Text("SERGEY ZAKURAKIN")
                     .foregroundStyle(.black)
                     .fontWeight(.semibold)
-                        .font(.title)
+                    .font(.title)
                 
                 Text("PHOTOGRAPHY")
                     .padding(.bottom)
                 
-                HStack {
-                    Text("LIKES")
-                        .font(.footnote)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "heart.fill")
-                    
-                    Text("...")
-                        .fontWeight(.bold)
-                }
-                .padding(.horizontal)
-                
-                ForEach(vm.albums) { album in
-                    VStack(alignment: .leading) {
-                        Text(album.title._content)
-                            .font(.headline)
-                            .padding(.bottom, 2)
+                Spacer()
+            }
+            
+            ScrollView {
+                VStack {
+                    HStack {
+                        Text("LIKES")
+                            .font(.footnote)
+                        Spacer()
+                        Image(systemName: "heart.fill")
+                        Text("...")
+                            .fontWeight(.bold)
                         
-                        if let firstPhoto = album.photosArray.first {
-                            AsyncImage(url: URL(string: firstPhoto.imageUrl)) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 100, height: 100)
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 200, height: 200)
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                case .failure:
-                                    Image(systemName: "photo.fill")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 200, height: 200)
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                @unknown default:
-                                    EmptyView()
+                    }
+                    .padding(.horizontal)
+                    
+                    ForEach(vm.photos, id: \.id) { photo in
+                        VStack(spacing: 30) {
+                            if let urlString = photo.urls?.full, let url = URL(string: urlString) {
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                    case .success(let image):
+                                        image.resizable().scaledToFill().frame(height: 250).clipShape(RoundedRectangle(cornerRadius: 15))
+                                    case .failure:
+                                        Image(systemName: "photo.fill").frame(height: 200).clipShape(RoundedRectangle(cornerRadius: 15))
+                                    @unknown default:
+                                        EmptyView()
+                                    }
                                 }
                             }
-                        } else {
-                            Text("No photos available")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
                         }
                     }
                 }
-                    
+                .padding(.top, 60)
+                    .task {
+                        await vm.fetchAlbums()
+                    }
                 }
-                .padding()
             }
         }
-        .task {
-            await vm.fetchAlbums()
-        }
     }
-}
-
-#Preview {
-    ContentView()
-}
+    
+    #Preview {
+        ContentView()
+    }
