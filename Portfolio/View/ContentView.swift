@@ -11,65 +11,59 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var vm = PhotosViewModel()
-    
+    @StateObject var vm = CollectionsViewModel()
+
     var body: some View {
         ZStack {
             Color.gray.ignoresSafeArea()
-            
-            VStack {
-                Text("SERGEY ZAKURAKIN")
-                    .foregroundStyle(.black)
-                    .fontWeight(.semibold)
-                    .font(.title)
-                
-                Text("PHOTOGRAPHY")
-                    .padding(.bottom)
-                
-                Spacer()
-            }
-            
             ScrollView {
                 VStack {
-                    HStack {
-                        Text("LIKES")
-                            .font(.footnote)
-                        Spacer()
-                        Image(systemName: "heart.fill")
-                        Text("...")
-                            .fontWeight(.bold)
-                        
-                    }
-                    .padding(.horizontal)
+                    Text("SERGEY ZAKURAKIN")
+                        .foregroundStyle(.black)
+                        .fontWeight(.semibold)
+                        .font(.title)
                     
+                    Text("PHOTOGRAPHY")
+                        .padding(.bottom)
+
+                    // Показываем каждое фото из коллекций
                     ForEach(vm.photos, id: \.id) { photo in
-                        VStack(spacing: 30) {
-                            if let urlString = photo.urls?.full, let url = URL(string: urlString) {
+                        VStack {
+                            if !photo.urls.full.isEmpty, let url = URL(string: photo.urls.full) {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .empty:
-                                        ProgressView()
+                                        ProgressView() // Пока изображение загружается
                                     case .success(let image):
-                                        image.resizable().scaledToFill().frame(height: 250).clipShape(RoundedRectangle(cornerRadius: 15))
+                                        image.resizable()
+                                            .scaledToFill()
+                                            .frame(height: 200)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
                                     case .failure:
-                                        Image(systemName: "photo.fill").frame(height: 200).clipShape(RoundedRectangle(cornerRadius: 15))
+                                        Image(systemName: "photo.fill") // В случае ошибки
+                                            .frame(height: 200)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
                                     @unknown default:
                                         EmptyView()
                                     }
                                 }
+                                .padding()
                             }
                         }
+                        
+                        Text("Array Gallery")
                     }
+                    
                 }
-                .padding(.top, 60)
-                    .task {
-                        await vm.fetchAlbums()
-                    }
-                }
+                .padding()
             }
         }
+        .task {
+            await vm.fetchCollections() // Загружаем коллекции при загрузке вью
+        }
     }
-    
-    #Preview {
-        ContentView()
-    }
+}
+
+#Preview {
+    ContentView()
+}
