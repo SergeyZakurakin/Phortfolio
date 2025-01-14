@@ -84,3 +84,7 @@ struct CollectionLinks: Codable {
         case photos
     }
 }
+
+
+
+
