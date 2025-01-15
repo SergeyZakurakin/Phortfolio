@@ -26,7 +26,7 @@ struct HomeView: View {
                         // Показываем каждое фото из коллекций
                         ForEach(vm.collections, id: \.id) { collection in
                             NavigationLink {
-                                Text("New screen")
+                                PhotosView(collection: collection)
                                 
 //                                AsyncImage(url: collection) { image in
 //                                    image.image
@@ -49,6 +49,38 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
+
+//struct PhotosView: View {
+//    let collection: Collection
+//    @StateObject private var vm = CollectionsViewModel()
+//    
+//    var body: some View {
+//        ScrollView {
+//            VStack(spacing: 20) {
+//                ForEach(vm.photos, id: \.id) { photo in
+//                    if let url = URL(string: photo.urls.regular) {
+//                        AsyncImage(url: url) { image in
+//                            image
+//                                .resizable()
+//                                .scaledToFill()
+//                               
+//                                .clipShape(RoundedRectangle(cornerRadius: 15))
+//                        } placeholder: {
+//                            ProgressView()
+//                        }
+//                    }
+//                }
+//                .frame(height: 200)
+//                .frame(maxWidth: .infinity)
+//            }
+//            .task {
+//                await vm.fetchPhotos(from: collection)
+//            }
+//        }
+//        .navigationTitle(collection.title)
+//    }
+//}
 
 
 //struct PhotosView: View {
